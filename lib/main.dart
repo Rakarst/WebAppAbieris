@@ -1,13 +1,9 @@
-import 'package:abieris/admin_panel.dart';
-import 'package:abieris/search_store.dart';
-
-import 'admin_login.dart';
-
-import 'login.dart';
+import 'package:abieris/screen_adminPanel.dart';
+import 'screen_sellerLogin.dart';
 import 'package:flutter/material.dart';
-import 'image_banner.dart';
+import 'screen_bothIndivualPanel.dart';
 import 'package:flutter_animated_button/flutter_animated_button.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'const_var.dart';
 
 void main() {
   runApp(const MyApp());
@@ -51,11 +47,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    var submitTextStyle = GoogleFonts.nunito(
-        fontSize: 14,
-        letterSpacing: 5,
-        color: Colors.white,
-        fontWeight: FontWeight.w300);
     return Scaffold(
         body: Stack(
       children: [

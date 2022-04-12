@@ -1,23 +1,13 @@
 import 'dart:convert';
-
-import 'admin_Panel.dart';
-import 'stock_screen.dart';
-import 'package:filter_list/filter_list.dart';
+import 'screen_bothStockPanel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_button/flutter_animated_button.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-
-import 'login.dart';
+import 'const_var.dart';
+import 'screen_sellerLogin.dart';
 
 List<String> magasinList = [];
-
-var submitTextStyle = GoogleFonts.nunito(
-    fontSize: 10,
-    letterSpacing: 5,
-    color: Colors.white,
-    fontWeight: FontWeight.w300);
 
 class SelectScreen extends StatefulWidget {
   final int id;

@@ -1,14 +1,12 @@
 import 'dart:convert';
-import 'package:abieris/stock_screen.dart';
+import 'package:abieris/screen_bothStockPanel.dart';
 
-import 'search_store.dart';
 import 'package:flutter_animated_button/flutter_animated_button.dart';
-import 'admin_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
-import 'var_const.dart';
+import 'const_var.dart';
 
 var itemsTextStyle = GoogleFonts.nunito(
     fontSize: 20,
@@ -123,9 +121,10 @@ class MagasinView extends StatelessWidget {
                               itemBuilder: (context, index) {
                                 var color = Colors.black38;
 
-                                if (snapshot.data?[index][1] == "0000-00-00" ||
-                                    snapshot.data?[index][1] == "0000-00-02") {
-                                  return const Text("");
+                                if (snapshot.data?[index][1] == "0001-00-00" ||
+                                    snapshot.data?[index][1] == "0002-00-00" ||
+                                    snapshot.data?[index][1] == "0000-00-00") {
+                                  return const SizedBox.shrink();
                                 }
                                 return AnimatedButton(
                                   onPress: () {
@@ -215,7 +214,7 @@ class MagasinView extends StatelessWidget {
                                           int.parse(
                                             snapshot.data?[0],
                                           ),
-                                          "0000-00-01")));
+                                          "0004-00-00")));
                             });
                           },
                           height: 40,
@@ -267,7 +266,7 @@ class MagasinView extends StatelessWidget {
                                           int.parse(
                                             snapshot.data?[0],
                                           ),
-                                          "0000-00-02")));
+                                          "0001-00-00")));
                             });
                           },
                           height: 40,

@@ -1,5 +1,5 @@
-import 'admin_panel.dart';
-import 'main.dart';
+import 'screen_adminPanel.dart';
+import 'package:abieris/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:http/http.dart' as http;

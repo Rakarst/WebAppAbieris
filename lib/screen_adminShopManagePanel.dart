@@ -1,17 +1,10 @@
 import 'dart:convert';
-import 'search_store.dart';
 import 'package:flutter_animated_button/flutter_animated_button.dart';
-import 'admin_panel.dart';
+import 'screen_adminPanel.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
-
-var itemsTextStyle = GoogleFonts.nunito(
-    fontSize: 20,
-    letterSpacing: 5,
-    color: Colors.white,
-    fontWeight: FontWeight.w300);
+import 'const_var.dart';
 
 // ignore: must_be_immutable
 class MagasinList extends StatelessWidget {

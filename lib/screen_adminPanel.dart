@@ -1,9 +1,7 @@
-import 'package:abieris/magasin_list.dart';
-import 'package:abieris/magasin_view.dart';
-import 'package:abieris/vendeur_view.dart';
-import 'package:flutter_animated_button/flutter_animated_button.dart';
-import 'by_type_controller.dart';
-import 'search_store.dart';
+import 'package:abieris/screen_adminShopManagePanel.dart';
+import 'package:abieris/screen_adminShopDetailsPanel.dart';
+import 'package:abieris/screen_adminSellerManagePanel.dart';
+import 'package:abieris/screen_adminAllStockMain.dart';
 import 'package:flutter/material.dart';
 import 'package:scroll_navigation/scroll_navigation.dart';
 import 'package:http/http.dart' as http;

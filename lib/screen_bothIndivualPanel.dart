@@ -1,32 +1,14 @@
 import 'dart:convert';
-import 'admin_panel.dart';
-import 'search_store.dart';
-import 'stock_screen.dart';
+import 'screen_adminPanel.dart';
+import 'screen_sellerPanel.dart';
+import 'screen_bothStockPanel.dart';
 import 'package:flutter_animated_button/flutter_animated_button.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
-
-var submitTextStyle = GoogleFonts.nunito(
-    fontSize: 14,
-    letterSpacing: 5,
-    color: Colors.white,
-    fontWeight: FontWeight.w300);
-
-var itemsTextStyle = GoogleFonts.nunito(
-    fontSize: 20,
-    letterSpacing: 5,
-    color: Colors.white,
-    fontWeight: FontWeight.w300);
-
-var magasinTextStyle = GoogleFonts.nunito(
-    fontSize: 30,
-    letterSpacing: 5,
-    color: Colors.white,
-    fontWeight: FontWeight.w300);
+import 'const_var.dart';
 
 class ImageBanner extends StatelessWidget {
   final String _assetPath;
@@ -87,7 +69,7 @@ class StockSapin extends State<StatefullStock> {
   getStock() {
     if (widget.date == '0000-00-00') {
       stock_date = "Stock Depart";
-    } else if (widget.date == '0000-00-01') {
+    } else if (widget.date == '0004-00-00') {
       stock_date = "Stock Actuel";
       switch (widget.whichStock) {
         case 'Epicea':
@@ -119,7 +101,7 @@ class StockSapin extends State<StatefullStock> {
             return getItems("/PHP/getBucheActuel.php", "Actuel");
           }
       }
-    } else if (widget.date == '0000-00-02') {
+    } else if (widget.date == '0001-00-00') {
       stock_date = "Changement Stock";
     } else {
       isEnable = false;
@@ -225,11 +207,9 @@ class StockSapin extends State<StatefullStock> {
       if (response.body.isNotEmpty) {
         var result = jsonDecode(response.body);
         if (result == false) {
-          debugPrint("ici");
           resetController();
           return ['ERROR'];
         }
-        debugPrint("la");
         if (cat == "Actuel") {
           isEnable = false;
           setControllerbis(widget.nom.length - 1, result);
@@ -461,7 +441,7 @@ class StockSapin extends State<StatefullStock> {
                 );
               }),
         ),
-        if (widget.date == '0000-00-00' || widget.date == '0000-00-02')
+        if (widget.date != '0004-00-00')
           AnimatedButton(
             onPress: () {
               setItems();

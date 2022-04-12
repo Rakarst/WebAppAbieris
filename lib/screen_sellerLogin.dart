@@ -1,7 +1,6 @@
-import 'package:abieris/search_store.dart';
+import 'package:abieris/screen_sellerPanel.dart';
 
 import 'main.dart';
-import 'stock_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:http/http.dart' as http;
