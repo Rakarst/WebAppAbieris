@@ -29,12 +29,6 @@ class AdminPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Future openDialogue() => showDialog(
-        context: context,
-        builder: (context) => const AlertDialog(
-              title: Text(""),
-              content: Text("Magasin Ajouté"),
-            ));
     return Container(
       color: Colors.white,
       child: SafeArea(
@@ -62,7 +56,7 @@ class AdminPanel extends StatelessWidget {
             ],
             pages: [
               MagasinView(),
-              ByTypeController(0, 0, true),
+              ByTypeController(0, id, true),
               MagasinList(),
               VnedeurList(),
             ],

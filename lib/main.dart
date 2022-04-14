@@ -1,3 +1,4 @@
+import 'package:abieris/screen_adminLogin.dart';
 import 'package:abieris/screen_adminPanel.dart';
 import 'screen_sellerLogin.dart';
 import 'package:flutter/material.dart';
@@ -80,8 +81,8 @@ class _MyHomePageState extends State<MyHomePage> {
           child: AnimatedButton(
             onPress: () {
               Future.delayed(const Duration(milliseconds: 460), () {
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => AdminPanel(0, 0)));
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) => const AdminScreen()));
               });
             },
             height: 70,

@@ -12,25 +12,7 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'const_var.dart';
 
-class ImageBanner extends StatelessWidget {
-  final String _assetPath;
-  const ImageBanner(this._assetPath, {Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      constraints:
-          BoxConstraints.expand(height: MediaQuery.of(context).size.height),
-      decoration: const BoxDecoration(color: Colors.grey),
-      child: Image.asset(
-        _assetPath,
-        fit: BoxFit.cover,
-      ),
-    );
-  }
-}
-
-class StatefullStock extends StatefulWidget {
+class UnsellableStock extends StatefulWidget {
   final List<String> nom;
   final int currentPage;
   final int nombreItem;
@@ -39,10 +21,11 @@ class StatefullStock extends StatefulWidget {
   final List<String> label;
   final List<TextEditingController> allController;
   late String date;
+  final String previousDate;
   String magasinName = "ERROR";
   bool isAdmin;
   // ignore: use_key_in_widget_constructors
-  StatefullStock(
+  UnsellableStock(
       this.nom,
       this.currentPage,
       this.nombreItem,
@@ -51,14 +34,15 @@ class StatefullStock extends StatefulWidget {
       this.magasinNumber,
       this.label,
       this.date,
+      this.previousDate,
       [this.isAdmin = false]);
 
   @override
-  State<StatefulWidget> createState() => StockSapin();
+  State<StatefulWidget> createState() => _UnsellableStock();
 }
 
 // ignore: must_be_immutable
-class StockSapin extends State<StatefullStock> {
+class _UnsellableStock extends State<UnsellableStock> {
   bool isEnable = true;
   late final Future<List> items = getStock();
   late final Future<List> magasin = getMagasin();
@@ -73,7 +57,6 @@ class StockSapin extends State<StatefullStock> {
       stock_date = "Stock Depart";
     } else if (widget.date == '0004-00-00') {
       stock_date = "Stock Actuel";
-      isEnable = false;
       switch (widget.whichStock) {
         case 'Epicea':
           {
@@ -106,7 +89,10 @@ class StockSapin extends State<StatefullStock> {
       }
     } else if (widget.date == '0001-00-00') {
       stock_date = "Changement Stock";
+    } else if (widget.date == '0002-00-00') {
+      stock_date = "Invendable";
     } else {
+      isEnable = false;
       stock_date = widget.date;
     }
     switch (widget.whichStock) {
@@ -334,43 +320,45 @@ class StockSapin extends State<StatefullStock> {
                                   child: Container(
                                     child: Stack(
                                       children: [
-                                        Align(
-                                          alignment: const Alignment(5, -0.65),
-                                          child: ConstrainedBox(
-                                            constraints:
-                                                BoxConstraints.tightFor(
-                                                    width: widht - 100),
-                                            child: Text(
-                                              "Qty",
-                                              style: itemsTextStyle,
-                                            ),
-                                          ),
-                                        ),
-                                        Align(
-                                          alignment: const Alignment(-1, -0.6),
-                                          child: ConstrainedBox(
-                                            constraints:
-                                                BoxConstraints.tightFor(
-                                                    width: widht - 100),
-                                            child: Text(
-                                              widget.label[index],
-                                              style: itemsTextStyle,
-                                            ),
-                                          ),
-                                        ),
-                                        Align(
-                                          alignment: const Alignment(0, 0.6),
-                                          child: ConstrainedBox(
-                                            constraints:
-                                                BoxConstraints.tightFor(
-                                                    width: widht - 100),
-                                            child: Text(
-                                              widget.nom[index],
-                                              style: itemsTextStyle,
-                                            ),
-                                          ),
-                                        ),
                                         if (index != widget.nom.length - 1) ...[
+                                          Align(
+                                            alignment:
+                                                const Alignment(5, -0.65),
+                                            child: ConstrainedBox(
+                                              constraints:
+                                                  BoxConstraints.tightFor(
+                                                      width: widht - 100),
+                                              child: Text(
+                                                "Qty",
+                                                style: itemsTextStyle,
+                                              ),
+                                            ),
+                                          ),
+                                          Align(
+                                            alignment:
+                                                const Alignment(-1, -0.6),
+                                            child: ConstrainedBox(
+                                              constraints:
+                                                  BoxConstraints.tightFor(
+                                                      width: widht - 100),
+                                              child: Text(
+                                                widget.label[index],
+                                                style: itemsTextStyle,
+                                              ),
+                                            ),
+                                          ),
+                                          Align(
+                                            alignment: const Alignment(0, 0.6),
+                                            child: ConstrainedBox(
+                                              constraints:
+                                                  BoxConstraints.tightFor(
+                                                      width: widht - 100),
+                                              child: Text(
+                                                widget.nom[index],
+                                                style: itemsTextStyle,
+                                              ),
+                                            ),
+                                          ),
                                           Align(
                                             alignment:
                                                 const Alignment(0.95, 0.60),
@@ -404,34 +392,8 @@ class StockSapin extends State<StatefullStock> {
                                                     const BoxConstraints
                                                         .tightFor(width: 80)),
                                           )
-                                        ] else ...[
-                                          Align(
-                                            alignment:
-                                                const Alignment(0.85, 0.60),
-                                            child: IconButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pushReplacement(
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            UnsellableScreen(
-                                                                0,
-                                                                widget
-                                                                    .magasinNumber,
-                                                                '0002-00-00',
-                                                                widget.date,
-                                                                widget.nom,
-                                                                widget
-                                                                    .whichStock,
-                                                                widget.label)));
-                                              },
-                                              icon: const Icon(
-                                                Icons.menu,
-                                                color: Colors.white,
-                                                size: 30,
-                                              ),
-                                            ),
-                                          )
-                                        ]
+                                        ] else
+                                          ...[]
                                       ],
                                     ),
                                     height: 150,
@@ -447,18 +409,11 @@ class StockSapin extends State<StatefullStock> {
                           child: BackButton(
                             color: Colors.white,
                             onPressed: () {
-                              if (widget.isAdmin) {
-                                Navigator.of(context)
-                                    .pushReplacement(MaterialPageRoute(
-                                  builder: (context) => AdminPanel(0, 0),
-                                ));
-                              } else {
-                                Navigator.of(context)
-                                    .pushReplacement(MaterialPageRoute(
-                                  builder: (context) =>
-                                      SelectScreen(widget.magasinNumber),
-                                ));
-                              }
+                              Navigator.of(context)
+                                  .pushReplacement(MaterialPageRoute(
+                                builder: (context) => StockScreen(getPages(),
+                                    widget.magasinNumber, widget.previousDate),
+                              ));
                             },
                           )),
                     ],
@@ -479,8 +434,14 @@ class StockSapin extends State<StatefullStock> {
               setItems();
               Future.delayed(const Duration(milliseconds: 460), () {
                 Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => StockScreen(widget.currentPage,
-                        widget.magasinNumber, widget.date)));
+                    builder: (context) => UnsellableScreen(
+                        0,
+                        widget.magasinNumber,
+                        widget.date,
+                        widget.previousDate,
+                        widget.nom,
+                        widget.whichStock,
+                        widget.label)));
               });
             },
             height: 70,
@@ -497,5 +458,39 @@ class StockSapin extends State<StatefullStock> {
           ),
       ],
     );
+  }
+
+  int getPages() {
+    switch (widget.whichStock) {
+      case 'Epicea':
+        {
+          return 0;
+        }
+      case 'Nordmann':
+        {
+          return 1;
+        }
+      case 'Nobilis':
+        {
+          return 2;
+        }
+      case 'Fraseri':
+        {
+          return 3;
+        }
+      case 'Pots':
+        {
+          return 4;
+        }
+      case 'Floques':
+        {
+          return 5;
+        }
+      case 'Buche':
+        {
+          return 6;
+        }
+    }
+    return 0;
   }
 }

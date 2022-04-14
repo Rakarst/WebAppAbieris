@@ -124,11 +124,14 @@ class _SelectScreenState extends State<SelectScreen> {
                                       itemBuilder: (context, index) {
                                         var color = Colors.black38;
 
-                                        if (snapshot.data?[index][1] ==
+                                        if (snapshot.data?[index]
+                                                    [1] ==
                                                 "0000-00-00" ||
                                             snapshot.data?[index][1] ==
-                                                "0000-00-02") {
-                                          return const Text("");
+                                                "0002-00-00" ||
+                                            snapshot.data?[index][1] ==
+                                                "0001-00-00") {
+                                          return const SizedBox.shrink();
                                         }
                                         return AnimatedButton(
                                           onPress: () {
@@ -254,7 +257,7 @@ class _SelectScreenState extends State<SelectScreen> {
                           ));
                 },
                 height: height / 8,
-                width: width / 2,
+                width: width,
                 text: 'CREER HISTORIQUE',
                 isReverse: true,
                 selectedTextColor: Colors.black,
@@ -277,7 +280,7 @@ class _SelectScreenState extends State<SelectScreen> {
                           _buildHistoriqueView(context, name));
                 },
                 height: height / 8,
-                width: width / 2,
+                width: width,
                 text: 'MODIFIER HISTORIQUE',
                 isReverse: true,
                 selectedTextColor: Colors.black,

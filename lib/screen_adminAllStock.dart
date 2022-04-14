@@ -179,12 +179,9 @@ class ByType extends StatelessWidget {
     if (response.statusCode == 200) {
       if (response.body.isNotEmpty) {
         var result = jsonDecode(response.body);
-        var debug = "REsult + $result";
-        debugPrint(debug);
         if (result == false) {
           return ["EROOR"];
         }
-
         return result;
       }
       return [];
@@ -193,9 +190,10 @@ class ByType extends StatelessWidget {
     }
   }
 
-  Future<List> getNumber(String cat, String table) async {
+  Future<List> getNumber(String cat, String table, int numberMagasin) async {
     String domaine = "le-petit-palais.com";
     String linkToPhp = "PHP/getNumber.php";
+    debugPrint(magasinNumber.toString());
     var data = {
       "cat": cat,
       "table": table,
@@ -204,17 +202,24 @@ class ByType extends StatelessWidget {
       Uri.https(domaine, linkToPhp),
       body: data,
     );
-
+    var responseStock = await http.post(
+      Uri.https(domaine, "PHP/getNumber2.php"),
+      body: data,
+    );
     if (response.statusCode == 200) {
       if (response.body.isNotEmpty) {
         var result = jsonDecode(response.body);
-        var debug = "REsult + $result";
-        debugPrint(debug);
-        if (result == false) {
-          return ["EROOR"];
+        var resultStock = jsonDecode(responseStock.body);
+
+        var i = 0;
+        for (i = 0; i < numberMagasin; i++) {
+          resultStock[i][cat] =
+              (int.parse(resultStock[i][cat]) - int.parse(result[i][cat]))
+                  .toString();
+          debugPrint(i.toString());
         }
 
-        return result;
+        return resultStock;
       }
       return [];
     } else {
@@ -240,17 +245,18 @@ class ByType extends StatelessWidget {
                       itemCount: snapshot.data?.length,
                       controller: ScrollController(),
                       itemBuilder: (context, index) {
+                        int? taille = snapshot.data?.length;
                         return Stack(
                           children: [
                             Text(snapshot.data?[index][0]),
                             FutureBuilder<List>(
-                                future: getNumber(label, nom),
+                                future: getNumber(label, nom, taille!),
                                 builder: (context, snapshot) {
                                   if (snapshot.hasData) {
                                     return Align(
                                         alignment: Alignment.topRight,
                                         child:
-                                            Text(snapshot.data?[index]['0']));
+                                            Text(snapshot.data?[index][label]));
                                   } else {
                                     return const Padding(
                                       padding: EdgeInsets.only(bottom: 50),

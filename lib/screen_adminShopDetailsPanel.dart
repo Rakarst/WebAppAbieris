@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'const_var.dart';
+import 'main.dart';
 
 var itemsTextStyle = GoogleFonts.nunito(
     fontSize: 20,
@@ -140,7 +141,8 @@ class MagasinView extends StatelessWidget {
                                                   int.parse(
                                                     snapshot.data?[index][0],
                                                   ),
-                                                  snapshot.data?[index][1])));
+                                                  snapshot.data?[index][1],
+                                                  true)));
                                     });
                                   },
                                   height: 40,
@@ -214,7 +216,8 @@ class MagasinView extends StatelessWidget {
                                           int.parse(
                                             snapshot.data?[0],
                                           ),
-                                          "0004-00-00")));
+                                          "0004-00-00",
+                                          true)));
                             });
                           },
                           height: 40,
@@ -240,7 +243,8 @@ class MagasinView extends StatelessWidget {
                                           int.parse(
                                             snapshot.data?[0],
                                           ),
-                                          "0000-00-00")));
+                                          "0000-00-00",
+                                          true)));
                             });
                           },
                           height: 40,
@@ -266,7 +270,8 @@ class MagasinView extends StatelessWidget {
                                           int.parse(
                                             snapshot.data?[0],
                                           ),
-                                          "0001-00-00")));
+                                          "0001-00-00",
+                                          true)));
                             });
                           },
                           height: 40,
@@ -331,6 +336,16 @@ class MagasinView extends StatelessWidget {
 
     return Column(
       children: <Widget>[
+        Align(
+          alignment: Alignment.topLeft,
+          child: BackButton(
+              color: Colors.white,
+              onPressed: () {
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  builder: (context) => const MyApp(),
+                ));
+              }),
+        ),
         Expanded(
           key: UniqueKey(),
           child: FutureBuilder<List>(
