@@ -69,29 +69,19 @@ class _SelectScreenState extends State<SelectScreen> {
       Uri.https(domaine, "PHP/getMagasinById.php"),
       body: data,
     );
-    if (response.statusCode == 200) {
-      if (response.body.isNotEmpty) {
+    if (response.statusCode == 200 &&
+        total.statusCode == 200 &&
+        magasin.statusCode == 200) {
+      if (response.body.isNotEmpty &&
+          total.body.isNotEmpty &&
+          magasin.body.isNotEmpty) {
         var result = jsonDecode(response.body);
-
-        if (total.statusCode == 200) {
-          if (total.body.isNotEmpty) {
-            var resultotal = jsonDecode(total.body);
-
-            if (magasin.statusCode == 200) {
-              if (magasin.body.isNotEmpty) {
-                var mag = jsonDecode(magasin.body);
-                name = mag['nom'];
-                return [result['0'], result['1'], resultotal.toString()];
-              }
-            }
-            return [];
-          }
-          return [];
-        } else {
-          throw Exception('Erreur connection serveur.');
-        }
+        var resultotal = jsonDecode(total.body);
+        var mag = jsonDecode(magasin.body);
+        name = mag['nom'];
+        return [result['0'], result['1'], resultotal.toString()];
       }
-      return [];
+      return ["100", "100", "100"];
     } else {
       throw Exception('Erreur connection serveur.');
     }
@@ -231,50 +221,6 @@ class _SelectScreenState extends State<SelectScreen> {
                                 })
                           ],
                         ));
-                  } else {
-                    return const Text("Erreur");
-                  }
-                })),
-          ],
-        ));
-  }
-
-  Widget _buildVerif(BuildContext context) {
-    DateTime now = DateTime.now();
-    String formattedDate = DateFormat('yyyy-MM-dd').format(now);
-
-    return AlertDialog(
-        title: const Text('Vérifications Informations'),
-        actions: <Widget>[
-          TextButton(
-            child: const Text('Correct'),
-            onPressed: () {
-              createReview(formattedDate, name);
-              Navigator.of(context).pop();
-              Navigator.of(context).pushReplacement(MaterialPageRoute(
-                builder: (context) => StockScreen(0, widget.id, formattedDate),
-              ));
-            },
-          ),
-          TextButton(
-            child: const Text('Erreur'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            const Text("Nous sommes le : "),
-            Text(formattedDate),
-            const Text("Vous êtes rattaché à : "),
-            FutureBuilder(
-                future: getMagasin(),
-                builder: ((context, snapshot) {
-                  if (snapshot.hasData) {
-                    return Text(name);
                   } else {
                     return const Text("Erreur");
                   }
@@ -436,7 +382,7 @@ class _SelectScreenState extends State<SelectScreen> {
                         }
                         return const Align(
                           alignment: Alignment(0, -0.5),
-                          child: Text("ERREUR CONTACTER : "),
+                          child: Text("Chargement..."),
                         );
                       }),
                   Align(
