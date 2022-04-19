@@ -151,7 +151,6 @@ class ByType extends StatelessWidget {
     if (response.statusCode == 200) {
       if (response.body.isNotEmpty) {
         var result = jsonDecode(response.body);
-
         if (result == false) {
           return ["EROOR"];
         }
@@ -190,10 +189,64 @@ class ByType extends StatelessWidget {
     }
   }
 
+  getStockByCat(String cat, String label, String id) {
+    switch (label) {
+      case 'epicea':
+        {
+          return getItemsTotal("/PHP/getEpiceaActuel.php", cat, id);
+        }
+      case 'nordmann':
+        {
+          return getItemsTotal("/PHP/getNordmannActuel.php", cat, id);
+        }
+      case 'nobilis':
+        {
+          return getItemsTotal("/PHP/getNobilisActuel.php", cat, id);
+        }
+      case 'fraseri':
+        {
+          return getItemsTotal("/PHP/getFraseriActuel.php", cat, id);
+        }
+      case 'pots':
+        {
+          return getItemsTotal("/PHP/getPotsActuel.php", cat, id);
+        }
+      case 'floques':
+        {
+          return getItemsTotal("/PHP/getFloquesActuel.php", cat, id);
+        }
+      case 'buche':
+        {
+          return getItemsTotal("/PHP/getBucheActuel.php", cat, id);
+        }
+    }
+  }
+
+  Future<List> getItemsTotal(String path, String cat, String id) async {
+    String domaine = "le-petit-palais.com";
+    String linkToPhp = path;
+    var data = {
+      "id": id,
+    };
+    var response = await http.post(
+      Uri.https(domaine, linkToPhp),
+      body: data,
+    );
+
+    if (response.statusCode == 200) {
+      if (response.body.isNotEmpty) {
+        var result = jsonDecode(response.body);
+        return [result[cat].toString()];
+      }
+      return [];
+    } else {
+      throw Exception('Erreur connection serveur.');
+    }
+  }
+
   Future<List> getNumber(String cat, String table, int numberMagasin) async {
     String domaine = "le-petit-palais.com";
     String linkToPhp = "PHP/getNumber.php";
-    debugPrint(magasinNumber.toString());
     var data = {
       "cat": cat,
       "table": table,
@@ -206,17 +259,25 @@ class ByType extends StatelessWidget {
       Uri.https(domaine, "PHP/getNumber2.php"),
       body: data,
     );
-    if (response.statusCode == 200) {
-      if (response.body.isNotEmpty) {
+    var responseSell = await http.post(
+      Uri.https(domaine, "PHP/getNumber3.php"),
+      body: data,
+    );
+    if (response.statusCode == 200 &&
+        responseSell.statusCode == 200 &&
+        responseStock.statusCode == 200) {
+      if (response.body.isNotEmpty &&
+          responseStock.body.isNotEmpty &&
+          responseStock.body.isNotEmpty) {
         var result = jsonDecode(response.body);
         var resultStock = jsonDecode(responseStock.body);
+        var resultSell = jsonDecode(responseSell.body);
 
         var i = 0;
         for (i = 0; i < numberMagasin; i++) {
           resultStock[i][cat] =
               (int.parse(resultStock[i][cat]) - int.parse(result[i][cat]))
                   .toString();
-          debugPrint(i.toString());
         }
 
         return resultStock;
@@ -250,13 +311,13 @@ class ByType extends StatelessWidget {
                           children: [
                             Text(snapshot.data?[index][0]),
                             FutureBuilder<List>(
-                                future: getNumber(label, nom, taille!),
+                                future: getStockByCat(
+                                    label, nom, snapshot.data?[index][1]),
                                 builder: (context, snapshot) {
                                   if (snapshot.hasData) {
                                     return Align(
                                         alignment: Alignment.topRight,
-                                        child:
-                                            Text(snapshot.data?[index][label]));
+                                        child: Text(snapshot.data?[0]));
                                   } else {
                                     return const Padding(
                                       padding: EdgeInsets.only(bottom: 50),
@@ -331,7 +392,7 @@ class ByType extends StatelessWidget {
                             );
                           }),
                       ListView.builder(
-                          itemCount: nombreItem,
+                          itemCount: nombreItem - 1,
                           controller: ScrollController(),
                           padding: const EdgeInsets.only(top: 60),
                           itemBuilder: (context, index) {

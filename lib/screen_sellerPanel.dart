@@ -23,7 +23,7 @@ class _SelectScreenState extends State<SelectScreen> {
   bool isSet = false;
   String name = "";
   late final Future<List> magasin = getMagasin();
-
+  late final Future<List> resultAll = getNomObjectif();
   Future<List> getMagasin() async {
     String domaine = "le-petit-palais.com";
     String linkToPhp = "PHP/getMagasinById.php";
@@ -44,6 +44,52 @@ class _SelectScreenState extends State<SelectScreen> {
         }
         name = result['nom'];
         return [name];
+      }
+      return [];
+    } else {
+      throw Exception('Erreur connection serveur.');
+    }
+  }
+
+  Future<List> getNomObjectif() async {
+    String domaine = "le-petit-palais.com";
+    String linkToPhp = "PHP/getNomObjectif.php";
+    var data = {
+      "id": widget.id.toString(),
+    };
+    var response = await http.post(
+      Uri.https(domaine, linkToPhp),
+      body: data,
+    );
+    var total = await http.post(
+      Uri.https(domaine, "PHP/getNombreVente.php"),
+      body: data,
+    );
+    var magasin = await http.post(
+      Uri.https(domaine, "PHP/getMagasinById.php"),
+      body: data,
+    );
+    if (response.statusCode == 200) {
+      if (response.body.isNotEmpty) {
+        var result = jsonDecode(response.body);
+
+        if (total.statusCode == 200) {
+          if (total.body.isNotEmpty) {
+            var resultotal = jsonDecode(total.body);
+
+            if (magasin.statusCode == 200) {
+              if (magasin.body.isNotEmpty) {
+                var mag = jsonDecode(magasin.body);
+                name = mag['nom'];
+                return [result['0'], result['1'], resultotal.toString()];
+              }
+            }
+            return [];
+          }
+          return [];
+        } else {
+          throw Exception('Erreur connection serveur.');
+        }
       }
       return [];
     } else {
@@ -242,68 +288,170 @@ class _SelectScreenState extends State<SelectScreen> {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     return Scaffold(
-        backgroundColor: const Color(0xff171717),
-        body: Stack(
-          children: [
-            Align(
-              alignment: const Alignment(0, -0.2),
-              child: AnimatedButton(
-                isSelected: isSelected,
-                onPress: () {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) => _buildVerif(
-                            context,
-                          ));
-                },
-                height: height / 8,
-                width: width,
-                text: 'CREER HISTORIQUE',
-                isReverse: true,
-                selectedTextColor: Colors.black,
-                transitionType: TransitionType.LEFT_TOP_ROUNDER,
-                textStyle: submitTextStyle,
-                backgroundColor: Colors.black38,
-                selectedBackgroundColor: Colors.white,
-                borderColor: Colors.white,
-                borderWidth: 1,
-              ),
-            ),
-            Align(
-              alignment: const Alignment(0, 0.2),
-              child: AnimatedButton(
-                isSelected: isSelected,
-                onPress: () {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) =>
-                          _buildHistoriqueView(context, name));
-                },
-                height: height / 8,
-                width: width,
-                text: 'MODIFIER HISTORIQUE',
-                isReverse: true,
-                selectedTextColor: Colors.black,
-                transitionType: TransitionType.LEFT_TOP_ROUNDER,
-                textStyle: submitTextStyle,
-                backgroundColor: Colors.black38,
-                selectedBackgroundColor: Colors.white,
-                borderColor: Colors.white,
-                borderWidth: 1,
-              ),
-            ),
-            Align(
-              alignment: const Alignment(-0.98, -0.98),
-              child: BackButton(
-                color: Colors.white,
-                onPressed: () {
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => LoginScreen(),
-                  ));
-                },
-              ),
-            )
-          ],
-        ));
+      backgroundColor: const Color(0xff171717),
+      body: Align(
+          child: Container(
+              height: height / 1.3,
+              width: width / 1.3,
+              decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(40.0),
+                    topRight: Radius.circular(40.0),
+                    bottomLeft: Radius.circular(40.0),
+                    bottomRight: Radius.circular(40.0),
+                  )),
+              child: Stack(
+                children: [
+                  FutureBuilder<List>(
+                      future: resultAll,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return Stack(
+                            children: <Widget>[
+                              Align(
+                                alignment: const Alignment(0, -0.85),
+                                child: Text(
+                                  snapshot.data?[0],
+                                  style: NomPrenom,
+                                ),
+                              ),
+                              Align(
+                                alignment: const Alignment(0, -0.70),
+                                child: Text(
+                                  name,
+                                  style: Objectif,
+                                ),
+                              ),
+                              Align(
+                                alignment: const Alignment(0, -0.45),
+                                child: Text(
+                                  "Objectif de Vente",
+                                  style: Objectif,
+                                ),
+                              ),
+                              Align(
+                                child: Container(
+                                  height: height / 17,
+                                  width: width / 1.5,
+                                  decoration: BoxDecoration(
+                                      borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(40.0),
+                                        topRight: Radius.circular(40.0),
+                                        bottomLeft: Radius.circular(40.0),
+                                        bottomRight: Radius.circular(40.0),
+                                      ),
+                                      border: Border.all(
+                                          width: 1.5, color: Colors.black)),
+                                ),
+                                alignment: const Alignment(0, -0.3),
+                              ),
+                              Align(
+                                child: Container(
+                                    height: height / 18,
+                                    width: (width / 1.51) /
+                                        (int.parse(snapshot.data?[1]) /
+                                            int.parse(snapshot.data?[2])),
+                                    decoration: const BoxDecoration(
+                                      color: Colors.green,
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(40.0),
+                                        topRight: Radius.circular(40.0),
+                                        bottomLeft: Radius.circular(40.0),
+                                        bottomRight: Radius.circular(40.0),
+                                      ),
+                                    )),
+                                alignment: const Alignment(0, -0.298),
+                              ),
+                              Align(
+                                child: Text(snapshot.data?[2] +
+                                    " / " +
+                                    snapshot.data?[1]),
+                                alignment: const Alignment(0, -0.285),
+                              ),
+                              Align(
+                                alignment: const Alignment(0, 0.25),
+                                child: AnimatedButton(
+                                  isSelected: isSelected,
+                                  onPress: () {
+                                    Future.delayed(Duration(milliseconds: 460),
+                                        () {
+                                      if (widget.id != -1) {
+                                        DateTime now = DateTime.now();
+                                        String formattedDate =
+                                            DateFormat('yyyy-MM-dd')
+                                                .format(now);
+                                        createReview(formattedDate, name);
+                                        Navigator.of(context)
+                                            .pushReplacement(MaterialPageRoute(
+                                          builder: (context) => StockScreen(
+                                              0, widget.id, formattedDate),
+                                        ));
+                                      }
+                                    });
+                                  },
+                                  borderRadius: 15,
+                                  height: height / 8,
+                                  width: width / 2,
+                                  text: 'CREER VENTE',
+                                  isReverse: true,
+                                  selectedTextColor: Colors.black,
+                                  transitionType:
+                                      TransitionType.LEFT_TOP_ROUNDER,
+                                  textStyle: submitTextStyle,
+                                  backgroundColor: Colors.black87,
+                                  selectedBackgroundColor: Colors.white,
+                                  borderColor: Colors.black,
+                                  borderWidth: 1,
+                                ),
+                              ),
+                              Align(
+                                alignment: const Alignment(0, 0.75),
+                                child: AnimatedButton(
+                                  isSelected: isSelected,
+                                  onPress: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) =>
+                                            _buildHistoriqueView(
+                                                context, name));
+                                  },
+                                  height: height / 8,
+                                  width: width / 2,
+                                  text: 'HISTORIQUE',
+                                  isReverse: true,
+                                  borderRadius: 15,
+                                  selectedTextColor: Colors.black,
+                                  transitionType:
+                                      TransitionType.LEFT_TOP_ROUNDER,
+                                  textStyle: submitTextStyle,
+                                  backgroundColor: Colors.black87,
+                                  selectedBackgroundColor: Colors.white,
+                                  borderColor: Colors.black,
+                                  borderWidth: 1,
+                                ),
+                              ),
+                            ],
+                          );
+                        }
+                        return const Align(
+                          alignment: Alignment(0, -0.5),
+                          child: Text("ERREUR CONTACTER : "),
+                        );
+                      }),
+                  Align(
+                    alignment: const Alignment(-0.95, -0.95),
+                    child: BackButton(
+                      color: Colors.black,
+                      onPressed: () {
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => LoginScreen(),
+                        ));
+                      },
+                    ),
+                  )
+                ],
+              ))),
+    );
   }
 }

@@ -12,8 +12,6 @@ class AdminScreen extends StatelessWidget {
   Duration get loginTime => const Duration(milliseconds: 2250);
 
   Future<String?> _authUser(LoginData data) async {
-    debugPrint('Name: ${data.name}, Password: ${data.password}');
-
     var email = data.name;
     var pass = data.password;
     String domaine = "le-petit-palais.com";
@@ -30,7 +28,6 @@ class AdminScreen extends StatelessWidget {
     if (response.statusCode == 200) {
       if (response.body.isNotEmpty) {
         var isLogin = response.body;
-        //debugPrint(isLogin);
         if (isLogin == "Connected") {
           return Future.delayed(loginTime).then((_) {
             return null;

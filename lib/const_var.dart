@@ -3,6 +3,18 @@ import 'package:google_fonts/google_fonts.dart';
 
 String site = "le-petit-palais.com";
 
+var NomPrenom = GoogleFonts.nunito(
+    fontSize: 30,
+    letterSpacing: 5,
+    color: Colors.black,
+    fontWeight: FontWeight.w300);
+
+var Objectif = GoogleFonts.nunito(
+    fontSize: 15,
+    letterSpacing: 5,
+    color: Colors.black,
+    fontWeight: FontWeight.w300);
+
 var submitTextStyle = GoogleFonts.nunito(
     fontSize: 14,
     letterSpacing: 5,

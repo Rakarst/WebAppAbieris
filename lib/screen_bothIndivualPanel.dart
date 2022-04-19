@@ -264,7 +264,6 @@ class StockSapin extends State<StatefullStock> {
     if (response.statusCode == 200) {
       if (response.body.isNotEmpty) {
         var result = jsonDecode(response.body);
-        debugPrint(result.toString());
         if (result == false) {
           return ["EROOR"];
         }
@@ -280,7 +279,6 @@ class StockSapin extends State<StatefullStock> {
   @override
   Widget build(BuildContext context) {
     double widht = MediaQuery.of(context).size.width;
-    debugPrint(widget.magasinNumber.toString());
 
     return Column(
       children: <Widget>[
@@ -422,7 +420,9 @@ class StockSapin extends State<StatefullStock> {
                                                                 widget.nom,
                                                                 widget
                                                                     .whichStock,
-                                                                widget.label)));
+                                                                widget.label,
+                                                                widget
+                                                                    .isAdmin)));
                                               },
                                               icon: const Icon(
                                                 Icons.menu,
@@ -480,7 +480,7 @@ class StockSapin extends State<StatefullStock> {
               Future.delayed(const Duration(milliseconds: 460), () {
                 Navigator.of(context).pushReplacement(MaterialPageRoute(
                     builder: (context) => StockScreen(widget.currentPage,
-                        widget.magasinNumber, widget.date)));
+                        widget.magasinNumber, widget.date, widget.isAdmin)));
               });
             },
             height: 70,

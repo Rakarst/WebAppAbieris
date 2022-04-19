@@ -27,7 +27,6 @@ class UnsellableScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint(id.toString());
     return Container(
       color: Colors.white,
       child: SafeArea(
