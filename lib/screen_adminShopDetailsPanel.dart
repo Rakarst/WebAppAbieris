@@ -129,8 +129,6 @@ class MagasinView extends StatelessWidget {
                                 }
                                 return AnimatedButton(
                                   onPress: () {
-                                    debugPrint(snapshot.data?[index][0]);
-
                                     Future.delayed(
                                         const Duration(milliseconds: 460), () {
                                       Navigator.of(context).pop();
@@ -206,7 +204,6 @@ class MagasinView extends StatelessWidget {
                       children: [
                         AnimatedButton(
                           onPress: () {
-                            debugPrint(magasinName);
                             Future.delayed(const Duration(milliseconds: 460),
                                 () {
                               Navigator.of(context)
@@ -336,16 +333,6 @@ class MagasinView extends StatelessWidget {
 
     return Column(
       children: <Widget>[
-        Align(
-          alignment: Alignment.topLeft,
-          child: BackButton(
-              color: Colors.white,
-              onPressed: () {
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (context) => const MyApp(),
-                ));
-              }),
-        ),
         Expanded(
           key: UniqueKey(),
           child: FutureBuilder<List>(
@@ -413,6 +400,19 @@ class MagasinView extends StatelessWidget {
                       child: Center(child: CircularProgressIndicator())),
                 );
               }),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: IconButton(
+            iconSize: 50,
+            icon: const Icon(Icons.close),
+            color: Colors.red,
+            onPressed: () {
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (context) => const MyApp(),
+              ));
+            },
+          ),
         ),
       ],
     );

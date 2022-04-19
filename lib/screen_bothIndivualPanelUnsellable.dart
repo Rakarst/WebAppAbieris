@@ -250,7 +250,6 @@ class _UnsellableStock extends State<UnsellableStock> {
     if (response.statusCode == 200) {
       if (response.body.isNotEmpty) {
         var result = jsonDecode(response.body);
-        debugPrint(result.toString());
         if (result == false) {
           return ["EROOR"];
         }
@@ -266,7 +265,6 @@ class _UnsellableStock extends State<UnsellableStock> {
   @override
   Widget build(BuildContext context) {
     double widht = MediaQuery.of(context).size.width;
-    debugPrint(widget.magasinNumber.toString());
 
     return Column(
       children: <Widget>[
@@ -411,8 +409,11 @@ class _UnsellableStock extends State<UnsellableStock> {
                             onPressed: () {
                               Navigator.of(context)
                                   .pushReplacement(MaterialPageRoute(
-                                builder: (context) => StockScreen(getPages(),
-                                    widget.magasinNumber, widget.previousDate),
+                                builder: (context) => StockScreen(
+                                    getPages(),
+                                    widget.magasinNumber,
+                                    widget.previousDate,
+                                    widget.isAdmin),
                               ));
                             },
                           )),
@@ -441,7 +442,8 @@ class _UnsellableStock extends State<UnsellableStock> {
                         widget.previousDate,
                         widget.nom,
                         widget.whichStock,
-                        widget.label)));
+                        widget.label,
+                        widget.isAdmin)));
               });
             },
             height: 70,

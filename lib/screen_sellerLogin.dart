@@ -13,8 +13,6 @@ class LoginScreen extends StatelessWidget {
   Duration get loginTime => const Duration(milliseconds: 2250);
 
   Future<String?> _authUser(LoginData data) async {
-    debugPrint('Name: ${data.name}, Password: ${data.password}');
-
     var email = data.name;
     var pass = data.password;
     String domaine = "le-petit-palais.com";
@@ -42,10 +40,18 @@ class LoginScreen extends StatelessWidget {
     }
   }
 
+  static String? defaultUserValidator(value) {
+    if (value!.isEmpty) {
+      return 'Erreur';
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return FlutterLogin(
       title: '',
+      userValidator: defaultUserValidator,
       logo: const AssetImage('assets/images/logo.png'),
       onLogin: _authUser,
       onSubmitAnimationCompleted: () {
@@ -57,6 +63,7 @@ class LoginScreen extends StatelessWidget {
           footerBackgroundColor: Colors.black38,
           primaryColor: const Color(0xff171717)),
       messages: LoginMessages(
+        userHint: 'Prenom NOM',
         passwordHint: 'Mots de passe',
         loginButton: 'Connection',
       ),

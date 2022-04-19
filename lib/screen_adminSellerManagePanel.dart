@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/services.dart';
 import 'package:flutter_animated_button/flutter_animated_button.dart';
 import 'screen_adminPanel.dart';
 import 'package:flutter/material.dart';
@@ -52,8 +53,29 @@ class VnedeurList extends StatelessWidget {
     if (response.statusCode == 200) {
       if (response.body.isNotEmpty) {
         var result = jsonDecode(response.body);
-        debugPrint(result.toString());
         return result['nom'];
+      }
+      return "Aucun Magasin";
+    } else {
+      throw Exception('Erreur connection serveur.');
+    }
+  }
+
+  Future<String> getObjectif(String vendeurname) async {
+    String domaine = "le-petit-palais.com";
+    String linkToPhp = "PHP/getObjectif.php";
+    var data = {
+      "email": vendeurname,
+    };
+    var response = await http.post(
+      Uri.https(domaine, linkToPhp),
+      body: data,
+    );
+
+    if (response.statusCode == 200) {
+      if (response.body.isNotEmpty) {
+        var result = jsonDecode(response.body);
+        return result['objectif'];
       }
       return "Aucun Magasin";
     } else {
@@ -81,6 +103,20 @@ class VnedeurList extends StatelessWidget {
     var data = {
       "email": vendeurname,
       "pass": pass,
+    };
+    await http.post(
+      Uri.https(domaine, linkToPhp),
+      body: data,
+    );
+  }
+
+  Future<void> changeObjectifVendeur(
+      String vendeurname, String objectif) async {
+    String domaine = "le-petit-palais.com";
+    String linkToPhp = "PHP/setObjectif.php";
+    var data = {
+      "email": vendeurname,
+      "objectif": objectif,
     };
     await http.post(
       Uri.https(domaine, linkToPhp),
@@ -141,6 +177,63 @@ class VnedeurList extends StatelessWidget {
     );
   }
 
+  Widget _buildObjectifView(BuildContext context, String vendeurEmail) {
+    return AlertDialog(
+        title: const Text('Objectif Vendeur'),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Valider'),
+            onPressed: () {
+              changeObjectifVendeur(vendeurEmail, _controllerPass.text);
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            child: const Text('Annuler'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            FutureBuilder<String>(
+                future: getObjectif(vendeurEmail),
+                builder: ((context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Text("Objectif vente actuelle : " + snapshot.data!);
+                  } else {
+                    return const Text("ERREUR");
+                  }
+                })),
+            const SizedBox(height: 10),
+            TextField(
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.digitsOnly
+              ],
+              controller: _controllerPass,
+              style: const TextStyle(color: Colors.black),
+              cursorColor: Colors.black,
+              decoration: const InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                    borderRadius: BorderRadius.all(Radius.circular(30))),
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                    borderRadius: BorderRadius.all(Radius.circular(30))),
+                helperStyle: TextStyle(color: Colors.black),
+                focusColor: Colors.black,
+                hintText: "Nouvel Objectif",
+                hintStyle: TextStyle(color: Colors.black),
+                filled: true,
+              ),
+            ),
+          ],
+        ));
+  }
+
   Widget _buildMagasinButton(BuildContext context, String vendeurEmail) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
@@ -195,8 +288,6 @@ class VnedeurList extends StatelessWidget {
                                 }
                                 return AnimatedButton(
                                   onPress: () {
-                                    debugPrint(snapshot.data?[index][0]);
-                                    debugPrint(vendeurEmail);
                                     changeMagasinVendeur(
                                         vendeurEmail, snapshot.data?[index][0]);
                                     Future.delayed(
@@ -254,7 +345,7 @@ class VnedeurList extends StatelessWidget {
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (BuildContext context) => AdminPanel(2, 0)));
+                      builder: (BuildContext context) => AdminPanel(3, 0)));
             },
           ),
           TextButton(
@@ -330,7 +421,7 @@ class VnedeurList extends StatelessWidget {
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (BuildContext context) => AdminPanel(2, 0)));
+                      builder: (BuildContext context) => AdminPanel(3, 0)));
             },
           ),
           TextButton(
@@ -357,7 +448,7 @@ class VnedeurList extends StatelessWidget {
                     borderRadius: BorderRadius.all(Radius.circular(30))),
                 helperStyle: TextStyle(color: Colors.black),
                 focusColor: Colors.black,
-                hintText: "Nom Vendeur",
+                hintText: "Prénom NOM",
                 hintStyle: TextStyle(color: Colors.black),
                 filled: true,
               ),
@@ -424,7 +515,7 @@ class VnedeurList extends StatelessWidget {
                       },
                       height: 40,
                       width: width,
-                      text: 'MODIFIER PASS',
+                      text: 'MOTS DE PASSE',
                       isReverse: true,
                       selectedTextColor: Colors.black,
                       transitionType: TransitionType.LEFT_TOP_ROUNDER,
@@ -449,7 +540,32 @@ class VnedeurList extends StatelessWidget {
                       },
                       height: 40,
                       width: width,
-                      text: 'MAGASIN ASSIGNE',
+                      text: 'ASSIGNATION',
+                      isReverse: true,
+                      selectedTextColor: Colors.black,
+                      transitionType: TransitionType.LEFT_TOP_ROUNDER,
+                      textStyle: submitTextStyle,
+                      backgroundColor: Colors.black38,
+                      selectedBackgroundColor: Colors.white,
+                      borderColor: Colors.white,
+                      borderWidth: 1,
+                    ),
+                    AnimatedButton(
+                      onPress: () {
+                        Future.delayed(const Duration(milliseconds: 460), () {
+                          Navigator.of(context).pop();
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) =>
+                                  _buildObjectifView(
+                                    context,
+                                    vendeurEmail,
+                                  ));
+                        });
+                      },
+                      height: 40,
+                      width: width,
+                      text: 'OBJECTIF',
                       isReverse: true,
                       selectedTextColor: Colors.black,
                       transitionType: TransitionType.LEFT_TOP_ROUNDER,
