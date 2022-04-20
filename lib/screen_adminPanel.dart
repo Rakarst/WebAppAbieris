@@ -4,8 +4,6 @@ import 'package:abieris/screen_adminSellerManagePanel.dart';
 import 'package:abieris/screen_adminAllStockMain.dart';
 import 'package:flutter/material.dart';
 import 'package:scroll_navigation/scroll_navigation.dart';
-import 'package:http/http.dart' as http;
-import 'dart:async';
 
 class AdminPanel extends StatelessWidget {
   final int id;
@@ -14,18 +12,6 @@ class AdminPanel extends StatelessWidget {
   final TextEditingController _controller = TextEditingController();
 
   AdminPanel(this.currentPages, this.id, {Key? key}) : super(key: key);
-
-  Future<void> createStore(String name) async {
-    String domaine = "le-petit-palais.com";
-    String linkToPhp = "PHP/createMagasin.php";
-    var data = {
-      "name": name,
-    };
-    await http.post(
-      Uri.https(domaine, linkToPhp),
-      body: data,
-    );
-  }
 
   @override
   Widget build(BuildContext context) {

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:abieris/const_fonction.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animated_button/flutter_animated_button.dart';
 import 'screen_adminPanel.dart';
@@ -11,171 +12,6 @@ import 'const_var.dart';
 class VnedeurList extends StatelessWidget {
   final TextEditingController _controller = TextEditingController();
   final TextEditingController _controllerPass = TextEditingController();
-  var name;
-  Future<List> getListMagasin() async {
-    String domaine = "le-petit-palais.com";
-    String linkToPhp = "PHP/getMagasin.php";
-    var data = {
-      "id": 0.toString(),
-    };
-    var response = await http.post(
-      Uri.https(domaine, linkToPhp),
-      body: data,
-    );
-
-    if (response.statusCode == 200) {
-      if (response.body.isNotEmpty) {
-        var result = jsonDecode(response.body);
-
-        if (result == false) {
-          return ["EROOR"];
-        }
-
-        return result;
-      }
-      return [];
-    } else {
-      throw Exception('Erreur connection serveur.');
-    }
-  }
-
-  Future<String> getMagasinByVendeur(String vendeurname) async {
-    String domaine = "le-petit-palais.com";
-    String linkToPhp = "PHP/getMagasinByVendeur.php";
-    var data = {
-      "email": vendeurname,
-    };
-    var response = await http.post(
-      Uri.https(domaine, linkToPhp),
-      body: data,
-    );
-
-    if (response.statusCode == 200) {
-      if (response.body.isNotEmpty) {
-        var result = jsonDecode(response.body);
-        return result['nom'];
-      }
-      return "Aucun Magasin";
-    } else {
-      throw Exception('Erreur connection serveur.');
-    }
-  }
-
-  Future<String> getObjectif(String vendeurname) async {
-    String domaine = "le-petit-palais.com";
-    String linkToPhp = "PHP/getObjectif.php";
-    var data = {
-      "email": vendeurname,
-    };
-    var response = await http.post(
-      Uri.https(domaine, linkToPhp),
-      body: data,
-    );
-
-    if (response.statusCode == 200) {
-      if (response.body.isNotEmpty) {
-        var result = jsonDecode(response.body);
-        return result['objectif'];
-      }
-      return "Aucun Magasin";
-    } else {
-      throw Exception('Erreur connection serveur.');
-    }
-  }
-
-  Future<void> changeMagasinVendeur(
-      String vendeurname, String newMagasin) async {
-    String domaine = "le-petit-palais.com";
-    String linkToPhp = "PHP/changeMagasin.php";
-    var data = {
-      "email": vendeurname,
-      "magasin": newMagasin,
-    };
-    await http.post(
-      Uri.https(domaine, linkToPhp),
-      body: data,
-    );
-  }
-
-  Future<void> changePassVendeur(String vendeurname, String pass) async {
-    String domaine = "le-petit-palais.com";
-    String linkToPhp = "PHP/changePassUsers.php";
-    var data = {
-      "email": vendeurname,
-      "pass": pass,
-    };
-    await http.post(
-      Uri.https(domaine, linkToPhp),
-      body: data,
-    );
-  }
-
-  Future<void> changeObjectifVendeur(
-      String vendeurname, String objectif) async {
-    String domaine = "le-petit-palais.com";
-    String linkToPhp = "PHP/setObjectif.php";
-    var data = {
-      "email": vendeurname,
-      "objectif": objectif,
-    };
-    await http.post(
-      Uri.https(domaine, linkToPhp),
-      body: data,
-    );
-  }
-
-  Future<List> getLIstVendeur() async {
-    String domaine = "le-petit-palais.com";
-    String linkToPhp = "PHP/getVendeur.php";
-    var data = {
-      "id": 0.toString(),
-    };
-    var response = await http.post(
-      Uri.https(domaine, linkToPhp),
-      body: data,
-    );
-
-    if (response.statusCode == 200) {
-      if (response.body.isNotEmpty) {
-        var result = jsonDecode(response.body);
-
-        if (result == false) {
-          return ["EROOR"];
-        }
-
-        return result;
-      }
-      return [];
-    } else {
-      throw Exception('Erreur connection serveur.');
-    }
-  }
-
-  Future<void> createVendeur(String name, String pass) async {
-    String domaine = "le-petit-palais.com";
-    String linkToPhp = "PHP/createVendeur.php";
-    var data = {
-      "email": name,
-      "pass": pass,
-      "id": (-1).toString(),
-    };
-    await http.post(
-      Uri.https(domaine, linkToPhp),
-      body: data,
-    );
-  }
-
-  Future<void> deleteMagasin(String vendeurEmail) async {
-    String domaine = "le-petit-palais.com";
-    String linkToPhp = "PHP/deleteVendeur.php";
-    var data = {
-      "email": vendeurEmail,
-    };
-    await http.post(
-      Uri.https(domaine, linkToPhp),
-      body: data,
-    );
-  }
 
   Widget _buildObjectifView(BuildContext context, String vendeurEmail) {
     return AlertDialog(
@@ -184,7 +20,8 @@ class VnedeurList extends StatelessWidget {
           TextButton(
             child: const Text('Valider'),
             onPressed: () {
-              changeObjectifVendeur(vendeurEmail, _controllerPass.text);
+              setData("changeObjectifVendeur",
+                  email: vendeurEmail, objectif: _controllerPass.text);
               Navigator.of(context).pop();
             },
           ),
@@ -199,11 +36,12 @@ class VnedeurList extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            FutureBuilder<String>(
-                future: getObjectif(vendeurEmail),
+            FutureBuilder<List>(
+                future: getData("id", "getObjectif", email: vendeurEmail),
                 builder: ((context, snapshot) {
                   if (snapshot.hasData) {
-                    return Text("Objectif vente actuelle : " + snapshot.data!);
+                    return Text(
+                        "Objectif vente actuelle : " + snapshot.data?[0]);
                   } else {
                     return const Text("ERREUR");
                   }
@@ -237,6 +75,8 @@ class VnedeurList extends StatelessWidget {
   Widget _buildMagasinButton(BuildContext context, String vendeurEmail) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
+    var name;
+
     return AlertDialog(
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(10.0))),
@@ -258,15 +98,16 @@ class VnedeurList extends StatelessWidget {
                 width: width,
                 child: Column(
                   children: [
-                    FutureBuilder<String>(
-                      future: getMagasinByVendeur(vendeurEmail),
+                    FutureBuilder<List>(
+                      future: getData("id", "getMagasinByVendeur",
+                          email: vendeurEmail),
                       builder: (context, snapshot) {
                         Future.delayed(
                             const Duration(milliseconds: 1000), () {});
                         // ARRETER
                         if (snapshot.hasData) {
-                          name = snapshot.data!;
-                          return const Text("");
+                          name = snapshot.data?[0];
+                          return const SizedBox.shrink();
                         } else {
                           name = "";
                           return const Text("Aucun magasin");
@@ -274,7 +115,7 @@ class VnedeurList extends StatelessWidget {
                       },
                     ),
                     FutureBuilder<List>(
-                        future: getListMagasin(),
+                        future: getData("id", "getListAllMagasin"),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             return ListView.builder(
@@ -288,8 +129,9 @@ class VnedeurList extends StatelessWidget {
                                 }
                                 return AnimatedButton(
                                   onPress: () {
-                                    changeMagasinVendeur(
-                                        vendeurEmail, snapshot.data?[index][0]);
+                                    setData("changeMagasinVendeur",
+                                        email: vendeurEmail,
+                                        magasin: snapshot.data?[index][0]);
                                     Future.delayed(
                                         const Duration(milliseconds: 460), () {
                                       Navigator.of(context).pop();
@@ -340,7 +182,7 @@ class VnedeurList extends StatelessWidget {
           TextButton(
             child: const Text('Oui'),
             onPressed: () {
-              deleteMagasin(vendeurEmail);
+              setData("deleteVendeur", email: vendeurEmail);
               Navigator.of(context).pop();
               Navigator.pushReplacement(
                   context,
@@ -371,7 +213,8 @@ class VnedeurList extends StatelessWidget {
           TextButton(
             child: const Text('Valider'),
             onPressed: () {
-              changePassVendeur(vendeurEmail, _controllerPass.text);
+              setData("changePassUsers",
+                  email: vendeurEmail, pass: _controllerPass.text);
               Navigator.of(context).pop();
             },
           ),
@@ -416,7 +259,8 @@ class VnedeurList extends StatelessWidget {
           TextButton(
             child: const Text('Valider'),
             onPressed: () {
-              createVendeur(_controller.text, _controllerPass.text);
+              setData("createVendeur",
+                  email: _controller.text, pass: _controllerPass.text);
               Navigator.of(context).pop();
               Navigator.pushReplacement(
                   context,
@@ -583,14 +427,12 @@ class VnedeurList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double widht = MediaQuery.of(context).size.width;
-
     return Column(
       children: <Widget>[
         Expanded(
           key: UniqueKey(),
           child: FutureBuilder<List>(
-              future: getLIstVendeur(),
+              future: getData("id", "getListVendeur"),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return ListView.builder(

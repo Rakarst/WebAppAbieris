@@ -83,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
             onPress: () {
               Future.delayed(const Duration(milliseconds: 460), () {
                 Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => AdminScreen()));
+                    MaterialPageRoute(builder: (context) => AdminPanel(0, 0)));
               });
             },
             height: 70,

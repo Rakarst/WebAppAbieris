@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:abieris/const_fonction.dart';
 import 'package:abieris/screen_bothStockPanelUnsellable.dart';
 
 import 'screen_adminPanel.dart';
@@ -45,7 +46,8 @@ class UnsellableStock extends StatefulWidget {
 class _UnsellableStock extends State<UnsellableStock> {
   bool isEnable = true;
   late final Future<List> items = getStock();
-  late final Future<List> magasin = getMagasin();
+  late final Future<List> magasin =
+      getData(widget.magasinNumber.toString(), "getMagasinName");
   late final String stock_date;
   @override
   void initState() {
@@ -236,32 +238,6 @@ class _UnsellableStock extends State<UnsellableStock> {
     );
   }
 
-  Future<List> getMagasin() async {
-    String domaine = "le-petit-palais.com";
-    String linkToPhp = "PHP/getMagasinById.php";
-    var data = {
-      "id": widget.magasinNumber.toString(),
-    };
-    var response = await http.post(
-      Uri.https(domaine, linkToPhp),
-      body: data,
-    );
-
-    if (response.statusCode == 200) {
-      if (response.body.isNotEmpty) {
-        var result = jsonDecode(response.body);
-        if (result == false) {
-          return ["EROOR"];
-        }
-        widget.magasinName = result['nom'];
-        return ["GOOD"];
-      }
-      return [];
-    } else {
-      throw Exception('Erreur connection serveur.');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     double widht = MediaQuery.of(context).size.width;
@@ -284,7 +260,7 @@ class _UnsellableStock extends State<UnsellableStock> {
                                   Align(
                                     alignment: const Alignment(0, -0.95),
                                     child: Text(
-                                      widget.magasinName,
+                                      snapshot.data![0],
                                       style: magasinTextStyle,
                                     ),
                                   ),

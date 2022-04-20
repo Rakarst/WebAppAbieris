@@ -152,3 +152,17 @@ final nomTop = [
   ],
   ["BUCHE", "BUCHE", "CROISILLON", "BUCHE / CROISILLON"]
 ];
+
+var tranformToPHP = [
+  'categorie1',
+  'categorie2',
+  'categorie3',
+  'categorie4',
+  'categorie5',
+  'categorie6',
+  'categorie7',
+  'categorie8',
+  'categorie9',
+  'categorie10',
+  'invendable',
+];

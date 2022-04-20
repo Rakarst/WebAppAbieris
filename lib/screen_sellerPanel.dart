@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:abieris/const_fonction.dart';
+
 import 'screen_bothStockPanel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_button/flutter_animated_button.dart';
@@ -23,7 +25,6 @@ class _SelectScreenState extends State<SelectScreen> {
   bool isSet = false;
   String name = "";
   late final Future<List> magasin = getMagasin();
-  late final Future<List> resultAll = getNomObjectif();
   Future<List> getMagasin() async {
     String domaine = "le-petit-palais.com";
     String linkToPhp = "PHP/getMagasinById.php";
@@ -46,42 +47,6 @@ class _SelectScreenState extends State<SelectScreen> {
         return [name];
       }
       return [];
-    } else {
-      throw Exception('Erreur connection serveur.');
-    }
-  }
-
-  Future<List> getNomObjectif() async {
-    String domaine = "le-petit-palais.com";
-    String linkToPhp = "PHP/getNomObjectif.php";
-    var data = {
-      "id": widget.id.toString(),
-    };
-    var response = await http.post(
-      Uri.https(domaine, linkToPhp),
-      body: data,
-    );
-    var total = await http.post(
-      Uri.https(domaine, "PHP/getNombreVente.php"),
-      body: data,
-    );
-    var magasin = await http.post(
-      Uri.https(domaine, "PHP/getMagasinById.php"),
-      body: data,
-    );
-    if (response.statusCode == 200 &&
-        total.statusCode == 200 &&
-        magasin.statusCode == 200) {
-      if (response.body.isNotEmpty &&
-          total.body.isNotEmpty &&
-          magasin.body.isNotEmpty) {
-        var result = jsonDecode(response.body);
-        var resultotal = jsonDecode(total.body);
-        var mag = jsonDecode(magasin.body);
-        name = mag['nom'];
-        return [result['0'], result['1'], resultotal.toString()];
-      }
-      return ["100", "100", "100"];
     } else {
       throw Exception('Erreur connection serveur.');
     }
@@ -250,7 +215,7 @@ class _SelectScreenState extends State<SelectScreen> {
               child: Stack(
                 children: [
                   FutureBuilder<List>(
-                      future: resultAll,
+                      future: getData(widget.id.toString(), "infoVendeur"),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           return Stack(
@@ -258,14 +223,14 @@ class _SelectScreenState extends State<SelectScreen> {
                               Align(
                                 alignment: const Alignment(0, -0.85),
                                 child: Text(
-                                  snapshot.data?[0],
+                                  snapshot.data![0].toString(),
                                   style: NomPrenom,
                                 ),
                               ),
                               Align(
                                 alignment: const Alignment(0, -0.70),
                                 child: Text(
-                                  name,
+                                  snapshot.data![1].toString(),
                                   style: Objectif,
                                 ),
                               ),
@@ -296,8 +261,10 @@ class _SelectScreenState extends State<SelectScreen> {
                                 child: Container(
                                     height: height / 18,
                                     width: (width / 1.51) /
-                                        (int.parse(snapshot.data?[1]) /
-                                            int.parse(snapshot.data?[2])),
+                                        (int.parse(
+                                                snapshot.data![2].toString()) /
+                                            int.parse(
+                                                snapshot.data![3].toString())),
                                     decoration: const BoxDecoration(
                                       color: Colors.green,
                                       borderRadius: BorderRadius.only(
@@ -310,9 +277,9 @@ class _SelectScreenState extends State<SelectScreen> {
                                 alignment: const Alignment(0, -0.298),
                               ),
                               Align(
-                                child: Text(snapshot.data?[2] +
+                                child: Text(snapshot.data![3].toString() +
                                     " / " +
-                                    snapshot.data?[1]),
+                                    snapshot.data![2].toString()),
                                 alignment: const Alignment(0, -0.285),
                               ),
                               Align(
@@ -382,7 +349,7 @@ class _SelectScreenState extends State<SelectScreen> {
                         }
                         return const Align(
                           alignment: Alignment(0, -0.5),
-                          child: Text("Chargement..."),
+                          child: CircularProgressIndicator(),
                         );
                       }),
                   Align(

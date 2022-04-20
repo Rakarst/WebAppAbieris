@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
+import 'const_fonction.dart';
 import 'const_var.dart';
 import 'main.dart';
 
@@ -17,76 +18,6 @@ var itemsTextStyle = GoogleFonts.nunito(
 
 // ignore: must_be_immutable
 class MagasinView extends StatelessWidget {
-  final TextEditingController _controller = TextEditingController();
-  Future<List> getListMagasin() async {
-    String domaine = "le-petit-palais.com";
-    String linkToPhp = "PHP/getMagasin.php";
-    var data = {
-      "id": 0.toString(),
-    };
-    var response = await http.post(
-      Uri.https(domaine, linkToPhp),
-      body: data,
-    );
-
-    if (response.statusCode == 200) {
-      if (response.body.isNotEmpty) {
-        var result = jsonDecode(response.body);
-
-        if (result == false) {
-          return ["EROOR"];
-        }
-
-        return result;
-      }
-      return [];
-    } else {
-      throw Exception('Erreur connection serveur.');
-    }
-  }
-
-  Future<List> getHistorique(String magasinName) async {
-    String domaine = "le-petit-palais.com";
-    String linkToPhp = "PHP/getHistorique.php";
-    var data = {
-      "magasin": magasinName,
-    };
-    var response = await http.post(
-      Uri.https(domaine, linkToPhp),
-      body: data,
-    );
-
-    if (response.statusCode == 200) {
-      if (response.body.isNotEmpty) {
-        var result = jsonDecode(response.body);
-
-        return result;
-      }
-      return [];
-    } else {
-      throw Exception('Erreur connection serveur.');
-    }
-  }
-
-  Future<List> getIdMagasin(String magasinName) async {
-    var data = {
-      "nom": magasinName,
-    };
-    var response = await http.post(
-      Uri.https(site, "PHP/getId.php"),
-      body: data,
-    );
-    if (response.statusCode == 200) {
-      if (response.body.isNotEmpty) {
-        var result = jsonDecode(response.body);
-        return result;
-      }
-      return [];
-    } else {
-      throw Exception('Erreur connection serveur.');
-    }
-  }
-
   Widget _buildHistoriqueView(BuildContext context, String magasinName) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
@@ -112,7 +43,8 @@ class MagasinView extends StatelessWidget {
                 child: Column(
                   children: [
                     FutureBuilder<List>(
-                        future: getHistorique(magasinName),
+                        future: getData("id", "getHistorique",
+                            magasin: magasinName),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             return ListView.builder(
@@ -197,7 +129,7 @@ class MagasinView extends StatelessWidget {
               height: height - 200,
               width: width,
               child: FutureBuilder<List>(
-                future: getIdMagasin(magasinName),
+                future: getData("id", "getIdMagasin", magasin: magasinName),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     return Column(
@@ -336,7 +268,7 @@ class MagasinView extends StatelessWidget {
         Expanded(
           key: UniqueKey(),
           child: FutureBuilder<List>(
-              future: getListMagasin(),
+              future: getData("id", "getListAllMagasin"),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return ListView.builder(

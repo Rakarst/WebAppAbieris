@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'package:abieris/const_fonction.dart';
 import 'package:flutter_animated_button/flutter_animated_button.dart';
 import 'screen_adminPanel.dart';
 import 'package:flutter/material.dart';
@@ -10,57 +10,6 @@ import 'const_var.dart';
 class MagasinList extends StatelessWidget {
   final TextEditingController _controller = TextEditingController();
 
-  Future<List> getListMagasin() async {
-    String domaine = "le-petit-palais.com";
-    String linkToPhp = "PHP/getMagasin.php";
-    var data = {
-      "id": 0.toString(),
-    };
-    var response = await http.post(
-      Uri.https(domaine, linkToPhp),
-      body: data,
-    );
-
-    if (response.statusCode == 200) {
-      if (response.body.isNotEmpty) {
-        var result = jsonDecode(response.body);
-
-        if (result == false) {
-          return ["EROOR"];
-        }
-
-        return result;
-      }
-      return [];
-    } else {
-      throw Exception('Erreur connection serveur.');
-    }
-  }
-
-  Future<void> createStore(String name) async {
-    String domaine = "le-petit-palais.com";
-    String linkToPhp = "PHP/createMagasin.php";
-    var data = {
-      "name": name,
-    };
-    await http.post(
-      Uri.https(domaine, linkToPhp),
-      body: data,
-    );
-  }
-
-  Future<void> deleteMagasin(String magasinName) async {
-    String domaine = "le-petit-palais.com";
-    String linkToPhp = "PHP/deleteMagasin.php";
-    var data = {
-      "nom": magasinName,
-    };
-    await http.post(
-      Uri.https(domaine, linkToPhp),
-      body: data,
-    );
-  }
-
   Widget _buildAreUSure(BuildContext context, String magasinName) {
     return AlertDialog(
         title: const Text('Validation'),
@@ -68,7 +17,7 @@ class MagasinList extends StatelessWidget {
           TextButton(
             child: const Text('Oui'),
             onPressed: () {
-              deleteMagasin(magasinName);
+              setData("deleteMagasin", magasin: magasinName);
               Navigator.of(context).pop();
               Navigator.pushReplacement(
                   context,
@@ -99,7 +48,7 @@ class MagasinList extends StatelessWidget {
           TextButton(
             child: const Text('Valider'),
             onPressed: () {
-              createStore(_controller.text);
+              setData("createMagasin", magasin: _controller.text);
               Navigator.of(context).pop();
               Navigator.pushReplacement(
                   context,
@@ -142,14 +91,12 @@ class MagasinList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double widht = MediaQuery.of(context).size.width;
-
     return Column(
       children: <Widget>[
         Expanded(
           key: UniqueKey(),
           child: FutureBuilder<List>(
-              future: getListMagasin(),
+              future: getData("id", "getListAllMagasin"),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return ListView.builder(
