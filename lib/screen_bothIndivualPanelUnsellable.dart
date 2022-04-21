@@ -47,7 +47,7 @@ class _UnsellableStock extends State<UnsellableStock> {
   bool isEnable = true;
   late final Future<List> items = getStock();
   late final Future<List> magasin =
-      getData(widget.magasinNumber.toString(), "getMagasinName");
+      getData({"id": widget.magasinNumber.toString(), "SQL": "getMagasinName"});
   late final String stock_date;
   @override
   void initState() {

@@ -26,31 +26,31 @@ class ByType extends StatelessWidget {
     switch (label) {
       case 'epicea':
         {
-          return getData(id, "getEpiceaActuel", cat: cat);
+          return getData({"id": id, "SQL": "getEpiceaActuel", "cat": cat});
         }
       case 'nordmann':
         {
-          return getData(id, "getNordmannActuel", cat: cat);
+          return getData({"id": id, "SQL": "getNordmannActuel", "cat": cat});
         }
       case 'nobilis':
         {
-          return getData(id, "getNobilisActuel", cat: cat);
+          return getData({"id": id, "SQL": "getNobilisActuel", "cat": cat});
         }
       case 'fraseri':
         {
-          return getData(id, "getFraseriActuel", cat: cat);
+          return getData({"id": id, "SQL": "getFraseriActuel", "cat": cat});
         }
       case 'pots':
         {
-          return getData(id, "getPotsActuel", cat: cat);
+          return getData({"id": id, "SQL": "getPotsActuel", "cat": cat});
         }
       case 'floques':
         {
-          return getData(id, "getFloquesActuel", cat: cat);
+          return getData({"id": id, "SQL": "getFloquesActuel", "cat": cat});
         }
       case 'buche':
         {
-          return getData(id, "getBucheActuel", cat: cat);
+          return getData({"id": id, "SQL": "getBucheActuel", "cat": cat});
         }
     }
   }
@@ -63,7 +63,8 @@ class ByType extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           FutureBuilder<List>(
-              future: getData(magasinNumber.toString(), "getListAllMagasin"),
+              future: getData(
+                  {"id": magasinNumber.toString(), "SQL": "getListAllMagasin"}),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return SizedBox(
@@ -186,9 +187,11 @@ class ByType extends StatelessWidget {
                                   ),
                                 ),
                                 FutureBuilder<List>(
-                                    future: getData("id", "getTotalByCat",
-                                        table: whichStock.toLowerCase(),
-                                        cat: tranformToPHP[index]),
+                                    future: getData({
+                                      "SQL": "getTotalByCat",
+                                      "table": whichStock.toLowerCase(),
+                                      "cat": tranformToPHP[index]
+                                    }),
                                     builder: (context, snapshot) {
                                       if (snapshot.hasData) {
                                         return Align(

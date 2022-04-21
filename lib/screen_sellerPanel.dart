@@ -215,7 +215,8 @@ class _SelectScreenState extends State<SelectScreen> {
               child: Stack(
                 children: [
                   FutureBuilder<List>(
-                      future: getData(widget.id.toString(), "infoVendeur"),
+                      future: getData(
+                          {"id": widget.id.toString(), "SQL": "infoVendeur"}),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           return Stack(

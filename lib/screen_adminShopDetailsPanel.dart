@@ -43,8 +43,8 @@ class MagasinView extends StatelessWidget {
                 child: Column(
                   children: [
                     FutureBuilder<List>(
-                        future: getData("id", "getHistorique",
-                            magasin: magasinName),
+                        future: getData(
+                            {"SQL": "getHistorique", "magasin": magasinName}),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             return ListView.builder(
@@ -129,7 +129,8 @@ class MagasinView extends StatelessWidget {
               height: height - 200,
               width: width,
               child: FutureBuilder<List>(
-                future: getData("id", "getIdMagasin", magasin: magasinName),
+                future:
+                    getData({"SQL": "getIdMagasin", "magasin": magasinName}),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     return Column(
@@ -268,7 +269,7 @@ class MagasinView extends StatelessWidget {
         Expanded(
           key: UniqueKey(),
           child: FutureBuilder<List>(
-              future: getData("id", "getListAllMagasin"),
+              future: getData({"SQL": "getListAllMagasin"}),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return ListView.builder(

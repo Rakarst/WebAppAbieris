@@ -37,7 +37,7 @@ class VnedeurList extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             FutureBuilder<List>(
-                future: getData("id", "getObjectif", email: vendeurEmail),
+                future: getData({"SQL": "getObjectif", "email": vendeurEmail}),
                 builder: ((context, snapshot) {
                   if (snapshot.hasData) {
                     return Text(
@@ -99,8 +99,10 @@ class VnedeurList extends StatelessWidget {
                 child: Column(
                   children: [
                     FutureBuilder<List>(
-                      future: getData("id", "getMagasinByVendeur",
-                          email: vendeurEmail),
+                      future: getData({
+                        "SQL": "getMagasinByVendeur",
+                        "email": vendeurEmail
+                      }),
                       builder: (context, snapshot) {
                         Future.delayed(
                             const Duration(milliseconds: 1000), () {});
@@ -115,7 +117,7 @@ class VnedeurList extends StatelessWidget {
                       },
                     ),
                     FutureBuilder<List>(
-                        future: getData("id", "getListAllMagasin"),
+                        future: getData({"SQL": "getListAllMagasin"}),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             return ListView.builder(
@@ -432,7 +434,7 @@ class VnedeurList extends StatelessWidget {
         Expanded(
           key: UniqueKey(),
           child: FutureBuilder<List>(
-              future: getData("id", "getListVendeur"),
+              future: getData({"SQL": "getListVendeur"}),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return ListView.builder(

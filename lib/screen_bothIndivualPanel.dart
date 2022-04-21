@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:abieris/const_fonction.dart';
 import 'package:abieris/screen_bothStockPanelUnsellable.dart';
 
@@ -61,80 +60,67 @@ class StatefullStock extends StatefulWidget {
 // ignore: must_be_immutable
 class StockSapin extends State<StatefullStock> {
   bool isEnable = true;
-  late final Future<List> items = getStock();
-  late final Future<List> magasin =
-      getData(widget.magasinNumber.toString(), "getMagasinName");
-  late final String stock_date;
+  late final Future<List> data = getData({
+    "id": widget.magasinNumber.toString(),
+    "SQL": getSQL(),
+    "date": widget.date,
+    "table": widget.whichStock.toLowerCase()
+  });
+  int regle = 0;
+  late String stock_date = "";
+  @override
+  void initState() {
+    super.initState();
+  }
 
-  getStock() {
-    if (widget.date == '0000-00-00') {
-      stock_date = "Stock Depart";
-    } else if (widget.date == '0004-00-00') {
-      stock_date = "Stock Actuel";
-      isEnable = false;
-      switch (widget.whichStock) {
-        case 'Epicea':
-          {
-            return getItems("/PHP/getEpiceaActuel.php", "Actuel");
-          }
-        case 'Nordmann':
-          {
-            return getItems("/PHP/getNordmannActuel.php", "Actuel");
-          }
-        case 'Nobilis':
-          {
-            return getItems("/PHP/getNobilisActuel.php", "Actuel");
-          }
-        case 'Fraseri':
-          {
-            return getItems("/PHP/getFraseriActuel.php", "Actuel");
-          }
-        case 'Pots':
-          {
-            return getItems("/PHP/getPotsActuel.php", "Actuel");
-          }
-        case 'Floques':
-          {
-            return getItems("/PHP/getFloquesActuel.php", "Actuel");
-          }
-        case 'Buche':
-          {
-            return getItems("/PHP/getBucheActuel.php", "Actuel");
-          }
-      }
-    } else if (widget.date == '0001-00-00') {
-      stock_date = "Changement Stock";
-    } else {
-      stock_date = widget.date;
-    }
-    switch (widget.whichStock) {
-      case 'Epicea':
+  getSQL() {
+    switch (widget.date) {
+      case '0004-00-00':
         {
-          return getItems("/PHP/getItems.php", "epicea");
+          stock_date = "Stock Actuel";
+          isEnable = false;
+
+          switch (widget.whichStock) {
+            case 'Epicea':
+              {
+                return "getEpiceaActuel";
+              }
+            case 'Nordmann':
+              {
+                return "getNordmannActuel";
+              }
+            case 'Nobilis':
+              {
+                return "getNobilisActuel";
+              }
+            case 'Fraseri':
+              {
+                return "getFraseriActuel";
+              }
+            case 'Pots':
+              {
+                return "getPotsActuel";
+              }
+            case 'Floques':
+              {
+                return "getFloquesActuel";
+              }
+            case 'Buche':
+              {
+                return "getBucheActuel";
+              }
+          }
         }
-      case 'Nordmann':
+        break;
+      default:
         {
-          return getItems("/PHP/getItems.php", "nordmann");
-        }
-      case 'Nobilis':
-        {
-          return getItems("/PHP/getItems.php", "nobilis");
-        }
-      case 'Fraseri':
-        {
-          return getItems("/PHP/getItems.php", "fraseri");
-        }
-      case 'Pots':
-        {
-          return getItems("/PHP/getItems.php", "pots");
-        }
-      case 'Floques':
-        {
-          return getItems("/PHP/getItems.php", "floques");
-        }
-      case 'Buche':
-        {
-          return getItems("/PHP/getItems.php", "buche");
+          regle = 1;
+          if (widget.date == '0000-00-00') {
+            stock_date = "Stock Depart";
+          } else if (widget.date == '0001-00-00') {
+            stock_date = "Changement Stock";
+          }
+          return "getStock";
         }
     }
   }
@@ -172,58 +158,6 @@ class StockSapin extends State<StatefullStock> {
     }
   }
 
-  resetController() {
-    for (int i = 0; i <= 11; i++) {
-      widget.allController[i].text = '0';
-    }
-  }
-
-  setController(int value, dynamic result) {
-    for (int i = 0; i <= value; i++) {
-      widget.allController[i].text = result[(i + 1).toString()];
-    }
-  }
-
-  setControllerbis(int value, dynamic result) {
-    for (int i = 0; i <= value; i++) {
-      widget.allController[i].text = result[(i).toString()];
-    }
-  }
-
-  Future<List> getItems(String path, String cat) async {
-    String domaine = "le-petit-palais.com";
-    String linkToPhp = path;
-    var data = {
-      "cat": cat,
-      "id": widget.magasinNumber.toString(),
-      "date": widget.date,
-    };
-    var response = await http.post(
-      Uri.https(domaine, linkToPhp),
-      body: data,
-    );
-
-    if (response.statusCode == 200) {
-      if (response.body.isNotEmpty) {
-        var result = jsonDecode(response.body);
-        if (result == false) {
-          resetController();
-          return ['ERROR'];
-        }
-        if (cat == "Actuel") {
-          isEnable = false;
-          setControllerbis(widget.nom.length - 1, result);
-        } else {
-          setController(widget.nom.length - 1, result);
-        }
-        return ['GOOD'];
-      }
-      return [];
-    } else {
-      throw Exception('Erreur connection serveur.');
-    }
-  }
-
   Future<void> setItems() async {
     String domaine = "le-petit-palais.com";
     String linkToPhp = getSet();
@@ -251,18 +185,20 @@ class StockSapin extends State<StatefullStock> {
   @override
   Widget build(BuildContext context) {
     double widht = MediaQuery.of(context).size.width;
-
     return Column(
       children: <Widget>[
         Expanded(
           child: FutureBuilder<List>(
-              future: items,
+              future: data,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return Stack(
                     children: [
                       FutureBuilder<List>(
-                          future: magasin,
+                          future: getData({
+                            "id": widget.magasinNumber.toString(),
+                            "SQL": "getMagasinName"
+                          }),
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               return Column(
@@ -350,6 +286,11 @@ class StockSapin extends State<StatefullStock> {
                                                   style: itemsTextStyle,
                                                   cursorColor: Colors.white,
                                                   decoration: InputDecoration(
+                                                    hintText: snapshot.data?[0][
+                                                        (index + regle)
+                                                            .toString()],
+                                                    hintStyle: const TextStyle(
+                                                        color: Colors.white),
                                                     enabled: isEnable,
                                                     enabledBorder:
                                                         const UnderlineInputBorder(

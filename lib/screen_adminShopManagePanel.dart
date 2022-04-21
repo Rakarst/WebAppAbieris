@@ -96,7 +96,7 @@ class MagasinList extends StatelessWidget {
         Expanded(
           key: UniqueKey(),
           child: FutureBuilder<List>(
-              future: getData("id", "getListAllMagasin"),
+              future: getData({"SQL": "getListAllMagasin"}),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return ListView.builder(
